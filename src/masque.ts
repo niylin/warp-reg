@@ -81,5 +81,5 @@ function yamlStringify(obj: any): string {
     }
     lines.push(`  ${key}: ${value}`);
   }
-  return lines.join("\n").trim();
+  return lines.join("\n") + "\n";
 }
