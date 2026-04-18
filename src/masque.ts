@@ -39,8 +39,6 @@ export function formatMasque(account: any): any {
     private_key: account.private_key,
     endpoint_v4: account.config.peers[0].endpoint.v4.split(":")[0],
     endpoint_v6: account.config.peers[0].endpoint.v6.replace("[", "").split("]")[0],
-    endpoint_h2_v4: "162.159.193.10",
-    endpoint_h2_v6: "2606:4700:d1::a29f:c10a",
     endpoint_pub_key: cleanKey(account.config.peers[0].public_key),
     license: account.account.license,
     id: account.id,
@@ -51,9 +49,9 @@ export function formatMasque(account: any): any {
 }
 
 export function formatMihomoMasque(account: any): string {
-  const timestamp = new Date().toISOString().replace(/[-:T]/g, "").split(".")[0];
+  // const timestamp = new Date().toISOString().replace(/[-:T]/g, "").split(".")[0];
   const config = {
-    name: `warp-masque-${timestamp}`,
+    name: `warp-masque`,
     type: "masque",
     server: "masque.wdqgn.eu.org",
     port: 443,
