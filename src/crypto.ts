@@ -24,32 +24,42 @@ export async function generateP256KeyPair() {
     ["sign", "verify"]
   );
 
-  const pubKeyDer = await crypto.subtle.exportKey("spki", keyPair.publicKey);
-  const privKeyDer = await crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
+  // Export as JWK to get raw d, x, y coordinates
+  const jwk = await crypto.subtle.exportKey("jwk", keyPair.privateKey);
+  const d = b64urlToUint8Array(jwk.d!);
+  const x = b64urlToUint8Array(jwk.x!);
+  const y = b64urlToUint8Array(jwk.y!);
 
-  // Extract SEC1 (ECPrivateKey) from PKCS8.
-  // Mihomo/Clash needs the raw SEC1 DER which starts with 0x30 0x77... (Base64: MHcCAQEE...)
-  const sec1Key = extractSEC1FromPKCS8(new Uint8Array(privKeyDer));
+  // Manually construct SEC1 ECPrivateKey DER for P-256
+  // Format: Sequence (0x30 0x77)
+  //   Version (0x02 0x01 0x01)
+  //   PrivateKey (0x04 0x20 [32 bytes])
+  //   NamedCurve [0] (0xa0 0x0a 0x06 0x08 0x2a 0x86 0x48 0xce 0x3d 0x03 0x01 0x07)
+  //   PublicKey [1] (0xa1 0x44 0x03 0x42 0x00 0x04 [64 bytes])
+  
+  const sec1 = new Uint8Array(121);
+  let pos = 0;
+  sec1.set([0x30, 0x77, 0x02, 0x01, 0x01, 0x04, 0x20], pos); pos += 7;
+  sec1.set(d, pos); pos += 32;
+  sec1.set([0xa0, 0x0a, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07], pos); pos += 12;
+  sec1.set([0xa1, 0x44, 0x03, 0x42, 0x00, 0x04], pos); pos += 6;
+  sec1.set(x, pos); pos += 32;
+  sec1.set(y, pos); pos += 32;
+
+  const pubKeyDer = await crypto.subtle.exportKey("spki", keyPair.publicKey);
 
   return {
     publicKey: b64encode(new Uint8Array(pubKeyDer)),
-    privateKey: b64encode(sec1Key), 
+    privateKey: b64encode(sec1), // Now starts with MHcCAQEE
   };
 }
 
-function extractSEC1FromPKCS8(pkcs8: Uint8Array): Uint8Array {
-  // PKCS#8 for P-256 usually has the SEC1 payload at the end.
-  // We look for the sequence start (0x30) that follows an Octet String tag (0x04).
-  for (let i = 0; i < pkcs8.length - 1; i++) {
-    if (pkcs8[i] === 0x04 && pkcs8[i + 1] <= 0x7F && pkcs8[i + 2] === 0x30) {
-      return pkcs8.slice(i + 2);
-    }
-    // Handle long form length if necessary
-    if (pkcs8[i] === 0x04 && pkcs8[i + 1] === 0x81 && pkcs8[i + 3] === 0x30) {
-      return pkcs8.slice(i + 3);
-    }
-  }
-  return pkcs8;
+function b64urlToUint8Array(b64url: string): Uint8Array {
+  const b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
+  const bin = atob(b64.padEnd(b64.length + (4 - b64.length % 4) % 4, '='));
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return arr;
 }
 
 export function generateRandomHex(bytes: number): string {
