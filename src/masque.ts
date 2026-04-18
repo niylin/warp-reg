@@ -49,3 +49,33 @@ export function formatMasque(account: any): any {
     ipv6: account.config.interface.addresses.v6,
   };
 }
+
+export function formatMihomoMasque(account: any): string {
+  const config = {
+    name: "warp-masque",
+    type: "masque",
+    server: "engage.cloudflareclient.com",
+    port: 443,
+    "private-key": account.private_key,
+    "public-key": account.config.peers[0].public_key,
+    ip: account.config.interface.addresses.v4.includes("/") 
+        ? account.config.interface.addresses.v4 
+        : account.config.interface.addresses.v4 + "/32",
+    ipv6: account.config.interface.addresses.v6.includes("/")
+        ? account.config.interface.addresses.v6
+        : account.config.interface.addresses.v6 + "/128",
+    mtu: 1280,
+    udp: true,
+  };
+  return yamlStringify(config);
+}
+
+function yamlStringify(obj: any): string {
+  return "- " + JSON.stringify(obj, null, 2)
+    .replace(/\{\n/, "")
+    .replace(/\n\}/, "")
+    .split("\n")
+    .map((line, i) => (i === 0 ? line.trim() : "  " + line.trim()))
+    .join("\n")
+    .replace(/"([^"]+)":/g, "$1:");
+}

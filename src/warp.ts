@@ -54,3 +54,30 @@ AllowedIPs = 0.0.0.0/0, ::/0
 Endpoint = ${account.config.peers[0].endpoint.host}:2408
 `;
 }
+
+export function formatMihomoWg(account: any): string {
+  const config = {
+    name: "warp-wg",
+    type: "wireguard",
+    "private-key": account.private_key,
+    server: account.config.peers[0].endpoint.host.split(":")[0],
+    port: 2408,
+    ip: account.config.interface.addresses.v4,
+    ipv6: account.config.interface.addresses.v6,
+    "public-key": account.config.peers[0].public_key,
+    "allowed-ips": ["0.0.0.0/0", "::/0"],
+    udp: true,
+    mtu: 1280,
+  };
+  return yamlStringify(config);
+}
+
+function yamlStringify(obj: any): string {
+  return "- " + JSON.stringify(obj, null, 2)
+    .replace(/\{\n/, "")
+    .replace(/\n\}/, "")
+    .split("\n")
+    .map((line, i) => (i === 0 ? line.trim() : "  " + line.trim()))
+    .join("\n")
+    .replace(/"([^"]+)":/g, "$1:");
+}

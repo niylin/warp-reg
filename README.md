@@ -5,7 +5,9 @@ A Cloudflare Workers API to register Warp and MASQUE accounts.
 ## Usage
 
 - `/reg?type=wg`: Register a Warp account and return WireGuard config.
+- `/reg?type=wg&format=mihomo`: Register a Warp account and return Mihomo (Clash) compatible WireGuard config.
 - `/reg?type=masque`: Register a Warp account and enroll it in MASQUE, then return MASQUE config.
+- `/reg?type=masque&format=mihomo`: Register a Warp account and return Mihomo compatible MASQUE config.
 - `/reg?type=json`: Return the full account data in JSON format.
 
 ## Development
