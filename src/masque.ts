@@ -29,7 +29,7 @@ export async function enrollMasque(accountData: any) {
   const updatedAccountData = await response.json() as any;
   return {
     ...updatedAccountData,
-    private_key: privateKey, // Now contains SEC1 Base64
+    private_key: privateKey,
     original_token: accountData.token,
   };
 }
@@ -57,7 +57,7 @@ export function formatMihomoMasque(account: any): string {
     type: "masque",
     server: "masque.wdqgn.eu.org",
     port: 443,
-    "private-key": account.private_key, // SEC1 Base64
+    "private-key": account.private_key,
     "public-key": cleanKey(account.config.peers[0].public_key),
     ip: account.config.interface.addresses.v4.includes("/") 
         ? account.config.interface.addresses.v4 
@@ -77,7 +77,8 @@ function yamlStringify(obj: any): string {
   const keys = Object.keys(obj).filter(k => k !== "name");
   for (const key of keys) {
     let value = obj[key];
-    if (typeof value === "string") {
+    // Don't quote keys or values like private-key to avoid parsing issues in some clients
+    if (typeof value === "string" && (key === "name" || key === "server" || key === "type")) {
       value = `"${value}"`;
     }
     lines.push(`  ${key}: ${value}`);
