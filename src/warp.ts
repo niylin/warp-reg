@@ -51,8 +51,7 @@ MTU = 1280
 [Peer]
 PublicKey = ${account.config.peers[0].public_key}
 AllowedIPs = 0.0.0.0/0, ::/0
-Endpoint = ${account.config.peers[0].endpoint.host}:2408
-`;
+Endpoint = ${account.config.peers[0].endpoint.host}:2408`.trim();
 }
 
 export function formatMihomoWg(account: any): string {
@@ -85,5 +84,5 @@ function yamlStringify(obj: any): string {
     }
     lines.push(`  ${key}: ${value}`);
   }
-  return lines.join("\n");
+  return lines.join("\n").trim();
 }

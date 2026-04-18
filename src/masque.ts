@@ -39,6 +39,8 @@ export function formatMasque(account: any): any {
     private_key: account.private_key,
     endpoint_v4: account.config.peers[0].endpoint.v4.split(":")[0],
     endpoint_v6: account.config.peers[0].endpoint.v6.replace("[", "").split("]")[0],
+    endpoint_h2_v4: "162.159.193.10",
+    endpoint_h2_v6: "2606:4700:d1::a29f:c10a",
     endpoint_pub_key: cleanKey(account.config.peers[0].public_key),
     license: account.account.license,
     id: account.id,
@@ -49,9 +51,9 @@ export function formatMasque(account: any): any {
 }
 
 export function formatMihomoMasque(account: any): string {
-  // const timestamp = new Date().toISOString().replace(/[-:T]/g, "").split(".")[0];
+  const timestamp = new Date().toISOString().replace(/[-:T]/g, "").split(".")[0];
   const config = {
-    name: `warp-masque`,
+    name: `warp-masque-${timestamp}`,
     type: "masque",
     server: "masque.wdqgn.eu.org",
     port: 443,
@@ -66,7 +68,6 @@ export function formatMihomoMasque(account: any): string {
     mtu: 1280,
     udp: true,
   };
-  
   return yamlStringify(config);
 }
 
@@ -75,11 +76,10 @@ function yamlStringify(obj: any): string {
   const keys = Object.keys(obj).filter(k => k !== "name");
   for (const key of keys) {
     let value = obj[key];
-    // Don't quote keys or values like private-key to avoid parsing issues in some clients
     if (typeof value === "string" && (key === "name" || key === "server" || key === "type")) {
       value = `"${value}"`;
     }
     lines.push(`  ${key}: ${value}`);
   }
-  return lines.join("\n");
+  return lines.join("\n").trim();
 }
