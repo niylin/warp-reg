@@ -46,9 +46,9 @@ async function handleWG(url: URL): Promise<Response> {
       });
     }
 
-    // Default: return JSON
-    return new Response(JSON.stringify(warpAccount, null, 2), {
-      headers: { "Content-Type": "application/json" },
+    // Default: return WireGuard config
+    return new Response(formatWireGuard(warpAccount), {
+      headers: { "Content-Type": "text/plain" },
     });
   } catch (err: any) {
     return new Response(`Error: ${err.message}`, { status: 500 });
