@@ -71,6 +71,38 @@ export function formatMihomoWg(account: any): string {
   return yamlStringify(config);
 }
 
+export function formatSingBoxWg(account: any): any {
+  const [host, port] = account.config.peers[0].endpoint.host.split(":");
+  const addressV4 = account.config.interface.addresses.v4;
+  const addressV6 = account.config.interface.addresses.v6;
+
+  return {
+    type: "wireguard",
+    tag: "warp-wg",
+    system: false,
+    mtu: 1408,
+    address: [
+      addressV4.includes("/") ? addressV4 : `${addressV4}/32`,
+      addressV6.includes("/") ? addressV6 : `${addressV6}/128`,
+    ],
+    private_key: cleanKey(account.private_key),
+    listen_port: 10000,
+    peers: [
+      {
+        address: host,
+        port: parseInt(port),
+        public_key: cleanKey(account.config.peers[0].public_key),
+        pre_shared_key: "",
+        allowed_ips: ["0.0.0.0/0", "::/0"],
+        persistent_keepalive_interval: 0,
+        reserved: [0, 0, 0],
+      },
+    ],
+    udp_timeout: "5m",
+    workers: 0,
+  };
+}
+
 function yamlStringify(obj: any): string {
   const lines = ["- name: " + obj.name];
   const keys = Object.keys(obj).filter(k => k !== "name");
