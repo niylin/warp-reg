@@ -17,7 +17,7 @@
 - **路径**: `/masque`
 - **说明**: 注册 Warp 账户并加入 MASQUE 协议支持。
 - **参数**:
-  - `format`: 可选。支持 `sing-box` (JSON), `mihomo` (YAML)。默认为完整账户数据的 JSON 格式。
+  - `format`: 可选。 `mihomo` (YAML)。默认为完整账户数据的 JSON 格式。
   - `jwt`, `model`, `locale`: 同上。
 
 ## 示例
@@ -26,10 +26,7 @@
 - **获取 Mihomo (Clash) 格式的 MASQUE 配置**: `https://warp-api.example.com/masque?format=mihomo`
 - **获取 Sing-box 格式的 WireGuard 配置**: `https://warp-api.example.com/wg?format=sing-box`
 
-## 项目结构
+## 测试地址
+  https://warp-register.wdqgn.eu.org/
 
-- `src/index.ts`: 入口文件，处理路由分发。
-- `src/warp.ts`: 处理 Warp 注册逻辑及 WG 格式转换。
-- `src/masque.ts`: 处理 MASQUE 注册逻辑及相关格式转换。
-- `src/crypto.ts`: 密钥生成工具（Warp 使用 X25519，MASQUE 使用 P-256）。
-- `src/config.ts`: 常量与默认配置。
+
