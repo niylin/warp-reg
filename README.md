@@ -1,6 +1,4 @@
-# Warp API
-
-基于 Cloudflare Workers 的 API，用于注册 Warp 和 MASQUE 账户并生成多种格式的配置。
+# Warp reg
 
 ## 接口说明
 
@@ -22,9 +20,9 @@
 
 ## 示例
 
-- **获取标准 WireGuard 配置**: `https://warp-api.example.com/wg`
-- **获取 Mihomo (Clash) 格式的 MASQUE 配置**: `https://warp-api.example.com/masque?format=mihomo`
-- **获取 Sing-box 格式的 WireGuard 配置**: `https://warp-api.example.com/wg?format=sing-box`
+- **获取标准 WireGuard 配置**: `https://warp-reg.example.com/wg`
+- **获取 Mihomo (Clash) 格式的 MASQUE 配置**: `https://warp-reg.example.com/masque?format=mihomo`
+- **获取 Sing-box 格式的 WireGuard 配置**: `https://warp-reg.example.com/wg?format=sing-box`
 
 ## 测试地址
   https://warp-register.wdqgn.eu.org/
